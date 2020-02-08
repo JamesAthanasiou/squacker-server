@@ -2,7 +2,7 @@ const db = require('../models');
 
 // /api/user/:id/messages
 
-exports.createMessage = async function(req, res, next){
+exports.createMessage = async function(req, res, next) {
   try {
     // create a new message in the db
     let message = await db.Message.create({
@@ -26,7 +26,7 @@ exports.createMessage = async function(req, res, next){
   }
 };
 
-exports.getMessage = async function(req, res, next){
+exports.getMessage = async function(req, res, next) {
   try {
     let message = await db.Message.find(req.params.message_id);
     return res.status(200).json(message);
@@ -36,12 +36,10 @@ exports.getMessage = async function(req, res, next){
   }
 }; 
 
-exports.deleteMessage = async function(req, res, next){
+exports.deleteMessage = async function(req, res, next) {
   try {
-    
     // not going to use findByIdAndRemove because a hook is being used with the delete method and not findByIdAndDelete
     let foundMessage = await db.Message.findById(req.params.message_id);
-    console.log(foundMessage)
     // let the record show that it took almost 3 hours to track down that .remove() should have been .deleteOne()
     await foundMessage.deleteOne();
     return res.status(200).json(foundMessage);
@@ -49,3 +47,12 @@ exports.deleteMessage = async function(req, res, next){
     return next(err);
   }
 };
+
+exports.updateMessage = async function(req, res, next) {
+  try {
+    let message = await db.Message.findByIdAndUpdate(req.params.message_id, {text:req.body.text});
+    return res.status(200).json(message);
+  } catch (err) {
+    return next(err);
+  }
+}
